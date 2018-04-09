@@ -8,20 +8,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+@RestController
+@RequestMapping("/fullcontact")
 public class FullContactController {
 
-    @RestController
-    @RequestMapping("/fullcontact")
-    public class FCController {
+    @Autowired
+    FullContactService fcService;
 
-        @Autowired
-        FullContactService fcService;
+    @RequestMapping("/email")
+    public PersonSummary searchByEmail(@RequestParam(value = "query", defaultValue = "email") String query) {
 
-        //Controller to pull FullContact data using only an email address
-        @RequestMapping("/email")
-        public PersonSummary searchByEmail(@RequestParam(value = "query", defaultValue = "email") String query) {
-
-            return fcService.searchByEmail(query);
-        }
+        return fcService.searchByEmail(query);
     }
+
 }

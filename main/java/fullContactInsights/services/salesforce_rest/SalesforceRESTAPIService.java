@@ -1,4 +1,4 @@
-package fullContactInsights.salesforce_rest;
+package fullContactInsights.services.salesforce_rest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,14 +22,14 @@ import org.json.JSONArray;
 import org.json.JSONTokener;
 import org.json.JSONException;
 
-public class Main {
+public class SalesforceRESTAPIService {
 
-    static final String USERNAME     = "john.budreski@gmail.com";
-    static final String PASSWORD     = "callawaygolf4";
+    static final String USERNAME     = "";
+    static final String PASSWORD     = "";
     static final String LOGINURL     = "https://login.salesforce.com";
     static final String GRANTSERVICE = "/services/oauth2/token?grant_type=password";
-    static final String CLIENTID     = "3MVG9d8..z.hDcPIXo8PVgcOpAoMgKr28Piddid4p4K4calvLn_atHwagupy9nTsZoFfBNkDF.kPLCWuoJYr0";
-    static final String CLIENTSECRET = "1983722166116885178";
+    static final String CLIENTID     = "";
+    static final String CLIENTSECRET = "";
     private static String REST_ENDPOINT = "/services/data" ;
     private static String API_VERSION = "/v32.0" ;
     private static String baseUri;
@@ -40,7 +40,15 @@ public class Main {
     private static String leadLastName;
     private static String leadCompany;
 
-    public static void main(String[] args) {
+    public static Header getOauthHeader() {
+        return oauthHeader;
+    }
+
+    public static void setOauthHeader(Header oauthHeader) {
+        SalesforceRESTAPIService.oauthHeader = oauthHeader;
+    }
+
+    public static void authenticate() {
 
         HttpClient httpclient = HttpClientBuilder.create().build();
 
@@ -100,12 +108,6 @@ public class Main {
         System.out.println("instance URL: "+loginInstanceUrl);
         System.out.println("access token/session ID: "+loginAccessToken);
         System.out.println("baseUri: "+ baseUri);
-
-        // Run codes to query, isnert, update and delete records in Salesforce using REST API
-        queryLeads();
-        createLeads();
-        updateLeads();
-        deleteLeads();
 
         // release connection
         httpPost.releaseConnection();
@@ -169,9 +171,12 @@ public class Main {
 
             //create the JSON object containing the new lead details.
             JSONObject lead = new JSONObject();
-            lead.put("FirstName", "John");
-            lead.put("LastName", "Boodnaowsky");
-            lead.put("Company", "CodingNomads");
+            lead.put("FirstName", "Stan");
+            lead.put("LastName", "Rogers");
+            lead.put("Company", "Telstra");
+            lead.put("Description", "le test, this is a bunch of letters that will go in this field");
+            lead.put("Email", "testing@beepboop.com");
+
 
             System.out.println("JSON for lead record to be inserted:\n" + lead.toString(1));
 
