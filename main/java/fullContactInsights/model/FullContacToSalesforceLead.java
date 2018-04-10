@@ -1,11 +1,13 @@
 package fullContactInsights.model;
 
+import fullContactInsights.services.FullContactService;
+
 public class FullContacToSalesforceLead {
 
     String firstName;
     String lastName;
     String company;
-    //String email;
+    String email;
     String city;
     String country;
     String title;
@@ -33,14 +35,14 @@ public class FullContacToSalesforceLead {
     public void setCompany(String company) {
         this.company = company;
     }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getCity() {
         return city;

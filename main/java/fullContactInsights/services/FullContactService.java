@@ -26,28 +26,33 @@ public class FullContactService {
     private static String leadId ;
     private static String baseUrl = "https://ap5.salesforce.com/services/data/v32.0";
 
+
     @Autowired
     RestTemplate restTemplate;
 
     // Access FullContact API via a given email address
-    public PersonSummary searchByEmail(String query) {
+    public PersonSummary searchByEmail(String email) {
 
         //FullContact API URL
-        String fQuery = "https://api.fullcontact.com/v2/person.json?email=" + query + "&apiKey=";
+        String fQuery = "https://api.fullcontact.com/v2/person.json?email=" + email + "&apiKey=";
 
         PersonSummary response = restTemplate.getForObject(fQuery, PersonSummary.class);
+
+        // Save passed email to SFDC
+        response.setEmail(email);
 
         // Connect with SFDC instance
         SalesforceRESTAPIService.authenticate();
 
         // Pull contact data from FullContact API and insert to SFDC as a new lead
-        convertFullContactToSFDC(response);
+        FullContacToSalesforceLead obj = convertFullContactToSFDC(response);
 
         return response;
     }
 
-    // Pull First Name, Last Name, Country, City, from PersonSummary objects into object to be sent to Salesforce
+    // Pull First Name, Last Name, Country, City, Company and Title from PersonSummary objects into object to be sent to Salesforce
     //instance as a lead.
+    // NOTE: Required fields for SFDC lead are: Last Name and Company. Lead will not be created if Company is null.
     public FullContacToSalesforceLead convertFullContactToSFDC(PersonSummary result) {
 
         System.out.println("\n_______________ Lead INSERT _______________");
@@ -59,10 +64,11 @@ public class FullContactService {
             JSONObject lead = new JSONObject();
             lead.put("FirstName", result.getContactInfo().getGivenName());
             lead.put("LastName", result.getContactInfo().getFamilyName());
-            lead.put("Company", result.getOrganizations()[0].getName());
+            lead.put("Company", "Fake Company1"); //result.getOrganizations()[0].getName());
             lead.put("City", result.getDemographics().getLocationDeduced().getCity().getName());
             lead.put("Country", result.getDemographics().getLocationDeduced().getCountry().getName());
             lead.put("Title", result.getOrganizations()[0].getTitle());
+            lead.put("Email", result.getEmail());
 
             System.out.println("JSON for lead record to be inserted:\n" + lead.toString(1));
 
@@ -79,6 +85,10 @@ public class FullContactService {
 
             //Make the request
             HttpResponse response = httpClient.execute(httpPost);
+
+//            // Send SFDC Status to JSON
+//            PersonSummary sp = new PersonSummary();
+//            sp.setSfdcStatus(response.getStatusLine().getStatusCode());
 
             //Process the results
             int statusCode = response.getStatusLine().getStatusCode();
@@ -98,9 +108,9 @@ public class FullContactService {
             ioe.printStackTrace();
         } catch (NullPointerException npe) {
             npe.printStackTrace();
+            System.out.println("Null Pointer Exception. Company Data not found. Lead not submitted to Salesforce.");
 
         }
-
         return null;
     }
 

@@ -11,6 +11,7 @@ public class PersonSummary {
     Demographics demographics;
     SocialProfiles[] socialProfiles;
     DigitalFootprints digitalFootprint;
+    String email;
 
     public int getStatus() {
         return status;
@@ -83,4 +84,14 @@ public class PersonSummary {
     public void setDigitalFootprint(DigitalFootprints digitalFootprint) {
         this.digitalFootprint = digitalFootprint;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
 }
